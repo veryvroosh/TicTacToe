@@ -8,6 +8,7 @@ public class mainPanel extends JPanel {
     JButton SWITCH;
     JButton QUIT;
     WindowQuitter windowQuitter;
+    public static int playerIndicator = 2;
 
     mainPanel(WindowQuitter windowQuitter){
 

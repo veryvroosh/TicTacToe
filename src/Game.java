@@ -3,45 +3,66 @@ import java.awt.*;
 
 public class Game extends JFrame {
 
-    JButton box1;
-    JButton box2;
-    JButton box3;
-    JButton box4;
-    JButton box5;
-    JButton box6;
-    JButton box7;
-    JButton box8;
-    JButton box9;
-
+    JButton[] boxes = new JButton[9];
+    JPanel buttonPanel;
+    JPanel winPanel;
 
     Game(){
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(612,612);
         this.setResizable(false);
-        this.setLayout(new GridLayout(3,3,3,3));
+        buttonPanel = new JPanel(new GridLayout(3,3,3,3));
+        winPanel = new JPanel();
 
-        box1 = new JButton();
-        box2 = new JButton();
-        box3 = new JButton();
-        box4 = new JButton();
-        box5 = new JButton();
-        box6 = new JButton();
-        box7 = new JButton();
-        box8 = new JButton();
-        box9 = new JButton();
+        winPanel.setBounds(0,256,612,100);
+        winPanel.setBackground(Color.BLACK);
+        winPanel.setVisible(false);
 
+        for(int i = 0; i<boxes.length; i++) {
+            boxes[i] = new JButton();
+            boxes[i].setFocusable(false);
+            boxes[i].setFont(new Font("Pacifico",Font.PLAIN,69));
+            final int Index = i;
+            boxes[i].addActionListener(
+                    (e) -> {
+                        if(mainPanel.playerIndicator%2==0) {
+                            boxes[Index].setText("X");
+                            checkWin("X");
+                        }
+                        else {
+                            boxes[Index].setText("O");
+                            checkWin("O");
+                        }
+                        mainPanel.playerIndicator++;
+                        boxes[Index].setEnabled(false);
+                    }
+            );
+            buttonPanel.add(boxes[i]);
+        }
 
-        this.add(box1);
-        this.add(box2);
-        this.add(box3);
-        this.add(box4);
-        this.add(box5);
-        this.add(box6);
-        this.add(box7);
-        this.add(box8);
-        this.add(box9);
+        this.add(winPanel);
+        this.add(buttonPanel);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+    }
+
+    public void checkWin(String letter) {
+        if (    (boxes[0].getText().equals(letter) && boxes[1].getText().equals(letter) && boxes[2].getText().equals(letter)) ||
+                (boxes[3].getText().equals(letter) && boxes[4].getText().equals(letter) && boxes[5].getText().equals(letter)) ||
+                (boxes[6].getText().equals(letter) && boxes[7].getText().equals(letter) && boxes[8].getText().equals(letter)) ||
+                (boxes[0].getText().equals(letter) && boxes[3].getText().equals(letter) && boxes[6].getText().equals(letter)) ||
+                (boxes[1].getText().equals(letter) && boxes[4].getText().equals(letter) && boxes[7].getText().equals(letter)) ||
+                (boxes[2].getText().equals(letter) && boxes[5].getText().equals(letter) && boxes[8].getText().equals(letter)) ||
+                (boxes[0].getText().equals(letter) && boxes[4].getText().equals(letter) && boxes[8].getText().equals(letter)) ||
+                (boxes[2].getText().equals(letter) && boxes[4].getText().equals(letter) && boxes[6].getText().equals(letter)) ) {
+
+            System.out.println(letter+" wins");
+            winPanel.setVisible(true);
+            for (int i = 0; i<boxes.length; i++) {
+                boxes[i].setEnabled(false);
+            }
+
+        }
     }
 
 }
