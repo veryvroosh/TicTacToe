@@ -85,11 +85,10 @@ public class Game extends JFrame {
         }
     }
 
-    int counter = 0;
     public void checkDraw() {
         boolean anyEnabled = false;
-        for (int i = 0; i < boxes.length; i++) {
-            if (boxes[i].isEnabled()) {
+        for (JButton box : boxes) {
+            if (box.isEnabled()) {
                 anyEnabled = true;
                 break;
             }
@@ -98,7 +97,7 @@ public class Game extends JFrame {
             turn.setFont(new Font ("Pacifico", Font.BOLD, 40));
             turn.setText("DRAW");
 
-            int answer = JOptionPane.showConfirmDialog(null, "Do you want to play again", "TicTacToe", JOptionPane.YES_NO_OPTION);
+            int answer = JOptionPane.showConfirmDialog(null, "Do you want to play again?", "TicTacToe", JOptionPane.YES_NO_OPTION);
             if(answer == 0) {
                 newGame();
             }
@@ -125,8 +124,8 @@ public class Game extends JFrame {
                     boxes[i].setBackground(Color.yellow);
                 }
 
-                for (int i = 0; i<boxes.length; i++) {
-                    boxes[i].setEnabled(false);
+                for (JButton box : boxes) {
+                    box.setEnabled(false);
                 }
 
                 if(letter.equals("X")) {
@@ -151,8 +150,8 @@ public class Game extends JFrame {
                     dispose();
                 }
 
-                for (int i = 0; i<boxes.length; i++) {
-                    boxes[i].setEnabled(true);
+                for (JButton box : boxes) {
+                    box.setEnabled(true);
                 }
 
                 break;
