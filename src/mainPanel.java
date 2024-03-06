@@ -4,34 +4,43 @@ import java.awt.*;
 public class mainPanel extends JPanel {
 
     Image bgImage;
-    JButton PLAY;
-    JButton SWITCH;
+    JButton START;
+    JButton PLAYERS;
     JButton QUIT;
     WindowQuitter windowQuitter;
     public static int playerIndicator = 2;
+    public static String player1 = "Player 1";
+    public static String player2 = "Player 2";
 
     mainPanel(WindowQuitter windowQuitter){
 
         this.windowQuitter = windowQuitter;
 
-        this.setLayout(null);
+        setLayout(null);
         bgImage = new ImageIcon("bg.png").getImage();
 
-        PLAY = new JButton("Play");
-        SWITCH = new JButton("Switch");
+        START = new JButton("Start");
+        PLAYERS = new JButton("Players");
         QUIT = new JButton("Quit");
 
-        PLAY.setBounds(256,360,100,50);
-        SWITCH.setBounds(256,420,100,50);
-        QUIT.setBounds(256,480,100,50);
-        PLAY.setFocusable(false);
-        SWITCH.setFocusable(false);
+        START.setBounds(256, 360, 100, 50);
+        PLAYERS.setBounds(256, 420, 100, 50);
+        QUIT.setBounds(256, 480, 100, 50);
+        START.setFocusable(false);
+        PLAYERS.setFocusable(false);
         QUIT.setFocusable(false);
 
-        PLAY.addActionListener(
+        START.addActionListener(
                 (e) -> {
                     windowQuitter.quitstartupWindow();
                     new Game();
+                }
+        );
+
+        PLAYERS.addActionListener(
+                (e) -> {
+                    player1 = JOptionPane.showInputDialog(null, "What is Player 1's name?");
+                    player2 = JOptionPane.showInputDialog(null, "What is Player 2's name?");
                 }
         );
 
@@ -39,16 +48,20 @@ public class mainPanel extends JPanel {
                 (e) -> windowQuitter.quitstartupWindow()
         );
 
-        this.add(PLAY);
-        this.add(SWITCH);
-        this.add(QUIT);
-
+        add(START);
+        add(PLAYERS);
+        add(QUIT);
     }
 
-    public void paint (Graphics g) {
-        super.paint(g);
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
         Graphics2D g2D = (Graphics2D) g;
-        g2D.drawImage(bgImage,0,0,null);
+        g2D.drawImage(bgImage, 0, 0, getWidth(), getHeight(), this);  // Draw image using panel dimensions
     }
 
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(612, 712);  // Set preferred size for the panel
+    }
 }

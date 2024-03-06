@@ -4,28 +4,46 @@ import java.awt.*;
 public class Game extends JFrame {
 
     JButton[] boxes = new JButton[9];
+    ImageIcon icon = new ImageIcon("icon.png");
     JPanel buttonPanel;
-    JPanel winPanel;
+    JPanel topPanel;
+    JLabel turn;
 
     Game(){
+        this.setTitle("TicTacToe");
+        this.setIconImage(icon.getImage());
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(612,612);
+        this.setSize(612,712);
         this.setResizable(false);
         buttonPanel = new JPanel(new GridLayout(3,3,3,3));
-        winPanel = new JPanel();
+        buttonPanel.setBackground(new Color(6,186,170));
 
-        winPanel.setBounds(0,256,612,100);
-        winPanel.setBackground(Color.BLACK);
-        winPanel.setVisible(false);
+
+        turn = new JLabel();
+        turn.setText(mainPanel.player1+"'s turn");
+        turn.setFont(new Font ("Pacifico", Font.PLAIN, 30));
+        turn.setForeground(new Color(17,33,58));
+        turn.setVerticalAlignment(JLabel.CENTER);
+        turn.setHorizontalAlignment(JLabel.CENTER);
+
+
+        topPanel = new JPanel(new BorderLayout());
+        topPanel.setPreferredSize(new Dimension(100,100));
+        topPanel.setBackground(new Color(6,186,170));
+        topPanel.add(turn);
+
+
 
         for(int i = 0; i<boxes.length; i++) {
             boxes[i] = new JButton();
             boxes[i].setFocusable(false);
-            boxes[i].setFont(new Font("Pacifico",Font.PLAIN,69));
+            boxes[i].setFont(new Font("Pacifico",Font.BOLD,69));
+            boxes[i].setForeground(new Color(17,33,58));
+            boxes[i].setBackground(new Color(219,171,35));
             final int Index = i;
             boxes[i].addActionListener(
                     (e) -> {
-                        if(mainPanel.playerIndicator%2==0) {
+                        if(mainPanel.playerIndicator % 2 == 0) {
                             boxes[Index].setText("X");
                             checkWin("X");
                         }
@@ -35,34 +53,116 @@ public class Game extends JFrame {
                         }
                         mainPanel.playerIndicator++;
                         boxes[Index].setEnabled(false);
+
+                        if(mainPanel.playerIndicator % 2 == 0) {
+                            turn.setText(mainPanel.player1+"'s turn");
+                        }
+                        else {
+                            turn.setText(mainPanel.player2+"'s turn");
+                        }
+
+                        checkDraw();
                     }
             );
             buttonPanel.add(boxes[i]);
         }
 
-        this.add(winPanel);
+        this.add(topPanel, BorderLayout.NORTH);
         this.add(buttonPanel);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
 
-    public void checkWin(String letter) {
-        if (    (boxes[0].getText().equals(letter) && boxes[1].getText().equals(letter) && boxes[2].getText().equals(letter)) ||
-                (boxes[3].getText().equals(letter) && boxes[4].getText().equals(letter) && boxes[5].getText().equals(letter)) ||
-                (boxes[6].getText().equals(letter) && boxes[7].getText().equals(letter) && boxes[8].getText().equals(letter)) ||
-                (boxes[0].getText().equals(letter) && boxes[3].getText().equals(letter) && boxes[6].getText().equals(letter)) ||
-                (boxes[1].getText().equals(letter) && boxes[4].getText().equals(letter) && boxes[7].getText().equals(letter)) ||
-                (boxes[2].getText().equals(letter) && boxes[5].getText().equals(letter) && boxes[8].getText().equals(letter)) ||
-                (boxes[0].getText().equals(letter) && boxes[4].getText().equals(letter) && boxes[8].getText().equals(letter)) ||
-                (boxes[2].getText().equals(letter) && boxes[4].getText().equals(letter) && boxes[6].getText().equals(letter)) ) {
-
-            System.out.println(letter+" wins");
-            winPanel.setVisible(true);
-            for (int i = 0; i<boxes.length; i++) {
-                boxes[i].setEnabled(false);
-            }
-
+    int displayWin_indicator;
+    public void displayWin() {
+        if(displayWin_indicator==0) {
+            turn.setFont(new Font ("Pacifico", Font.BOLD, 40));
+            turn.setText(mainPanel.player1+" WINS!!");
+        }
+        else if (displayWin_indicator==1){
+            turn.setFont(new Font ("Pacifico", Font.BOLD, 40));
+            turn.setText(mainPanel.player2+" WINS!!");
         }
     }
 
+    int counter = 0;
+    public void checkDraw() {
+        boolean anyEnabled = false;
+        for (int i = 0; i < boxes.length; i++) {
+            if (boxes[i].isEnabled()) {
+                anyEnabled = true;
+                break;
+            }
+        }
+        if (!anyEnabled) {
+            turn.setFont(new Font ("Pacifico", Font.BOLD, 40));
+            turn.setText("DRAW");
+
+            int answer = JOptionPane.showConfirmDialog(null, "Do you want to play again", "TicTacToe", JOptionPane.YES_NO_OPTION);
+            if(answer == 0) {
+                newGame();
+            }
+            else {
+                setVisible(false);
+                dispose();
+            }
+        }
+    }
+
+    public void checkWin(String letter) {
+        int[][] winPatterns = {
+                {0, 1, 2}, {3, 4, 5}, {6, 7, 8}, // Horizontal
+                {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, // Vertical
+                {0, 4, 8}, {2, 4, 6}             // Diagonal
+        };
+
+        for(int[] condition : winPatterns) {
+            if (boxes[condition[0]].getText().equals(letter) &&
+                    boxes[condition[1]].getText().equals(letter) &&
+                    boxes[condition[2]].getText().equals(letter)) {
+
+                for (int i : condition) {
+                    boxes[i].setBackground(Color.yellow);
+                }
+
+                for (int i = 0; i<boxes.length; i++) {
+                    boxes[i].setEnabled(false);
+                }
+
+                if(letter.equals("X")) {
+                    displayWin_indicator = 0;
+                }
+                else{
+                    displayWin_indicator = 1;
+                }
+
+                mainPanel.playerIndicator = 1;
+
+                System.out.println(letter+" wins");
+
+                displayWin();
+
+                int answer = JOptionPane.showConfirmDialog(null, "Do you want to play again", "TicTacToe", JOptionPane.YES_NO_OPTION);
+                if(answer == 0) {
+                    newGame();
+                }
+                else {
+                    setVisible(false);
+                    dispose();
+                }
+
+                for (int i = 0; i<boxes.length; i++) {
+                    boxes[i].setEnabled(true);
+                }
+
+                break;
+            }
+        }
+    }
+
+    public void newGame() {
+        setVisible(false);
+        dispose();
+        new Game();
+    }
 }
